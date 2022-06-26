@@ -18,7 +18,7 @@ class PostController extends Controller
         "published" => "sometimes|accepted",
         "category_id" => "nullable|exists:categories,id",
         // "image" => 
-        "tags" => ""
+        "tags" => "nullable|exists:tags,id"
     ];
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::paginate(8);
         return view('admin.posts.index', compact('posts'));
     }
 
