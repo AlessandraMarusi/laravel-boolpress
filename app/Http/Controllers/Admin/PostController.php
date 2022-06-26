@@ -12,6 +12,14 @@ use App\Tag;
 
 class PostController extends Controller
 {
+    protected $validationRule = [
+        'title' => 'required|string|max:100',
+        'content' => 'required',
+        "published" => "sometimes|accepted",
+        "category_id" => "nullable|exists:categories,id",
+        // "image" => 
+        "tags" => ""
+    ];
     /**
      * Display a listing of the resource.
      *
@@ -61,6 +69,9 @@ class PostController extends Controller
 
         $newPost->save();
 
+        if(isset($data['tags'])){
+            $newPost->tags()->sync($data['tags']);
+        }
         return redirect()->route('admin.posts.show', $newPost->id);
     }
 
