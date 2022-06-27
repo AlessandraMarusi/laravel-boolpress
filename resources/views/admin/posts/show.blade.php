@@ -1,4 +1,5 @@
 @extends('layouts.admin');
+@include('partials/popupdelete')
 
 @section('content')
     <h1>{{$post->title}}</h1>
@@ -6,7 +7,7 @@
         <h2>{{$post->category->name}}</h2>
     @endif
     <small>{{$post->created_at}}</small>
-    <p>{{$post->content}}</p>
+    <p>{!!$post->content!!}</p>
     <h5>{{$post->published ? 'Published' : 'Unpublished'}}</h5>
     @if ($post->tags)
         <ul>

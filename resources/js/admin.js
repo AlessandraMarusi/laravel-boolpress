@@ -6,7 +6,7 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+//window.Vue = require('vue');
 
 /**
  * The following block of code may be used to automatically register your
@@ -19,7 +19,7 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+//Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -27,7 +27,7 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = new Vue({
+/* const app = new Vue({
     el: "#app",
     data: {
         currentForm: null,
@@ -48,4 +48,31 @@ const app = new Vue({
             this.currentForm.submit();
         },
     },
-});
+}); */
+
+window.boolpress = {
+    currentForm: null,
+    itemid: null,
+    openModal(e,id){
+        e.preventDefault();
+        //console.log(id);
+        this.itemid = id;
+        //console.log(e.currentTarget);
+        this.currentForm = e.currentTarget.parentNode;
+        // console.log(this.currentForm);
+        $('#deleteModal-body').html(`Sei sicuro di voler eliminare l'elemento con id: ${this.itemid}`);
+        $('#deleteModal').modal('show');
+    },
+    previewImage() {
+        var oFReader = new FileReader();
+        oFReader.readAsDataURL(document.getElementById("image").files[0]);
+
+        oFReader.onload = function (oFREvent) {
+            document.getElementById("uploadPreview").src = oFREvent.target.result;
+        };
+    },
+    submitForm(){
+        this.currentForm.submit();
+    }
+
+}

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Storage;
 use App\Post;
 use App\Category;
 use App\Tag;
@@ -17,7 +18,7 @@ class PostController extends Controller
         'content' => 'required',
         "published" => "sometimes|accepted",
         "category_id" => "nullable|exists:categories,id",
-        // "image" => 
+        "image" => "nullable|image|mimes:jpeg,bmp,png,svg|max:2048",
         "tags" => "nullable|exists:tags,id"
     ];
     /**
@@ -58,6 +59,10 @@ class PostController extends Controller
         $newPost->content = $data['content'];
         $newPost->published = isset($data['published']);
         $newPost->category_id = $data['category_id'];
+        if( isset($data['image']) ) {
+            $path_image = Storage::put("uploads", $data['image']); // uploads/nomeimg.jpg
+            $newPost->image = $path_image;
+        }
         /* $slug = Str::of($data['title'])->slug("-");
         $count = 1;
         while(Post::where('slug', $slug)->first()){
