@@ -1,19 +1,21 @@
 <template>
-    <div>
-        <h1>Work In Progress</h1>
-        <h2>Sito in costruzione</h2>
-        <main-component/>
-    </div>
+  <div>
+   <header-component />
+   <main-component />
+   <footer-component />
+  </div>
 </template>
 
 <script>
-import MainComponent from '../components/MainComponent.vue'
-
-
+import HeaderComponent from '../components/HeaderComponent.vue';
+import MainComponent from '../components/MainComponent.vue';
+import FooterComponent from '../components/FooterComponent.vue';
 export default {
-    name:"App",
+    name: "App",
     components: {
-        MainComponent
+        HeaderComponent,
+        MainComponent,
+        FooterComponent
     }
 }
 </script>
