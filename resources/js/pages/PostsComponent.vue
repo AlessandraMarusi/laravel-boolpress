@@ -3,6 +3,7 @@
         <h1> Posts</h1>
         <ul v-if="posts.length > 0">
             <li v-for="(post,index) in posts" :key="post.id">
+                <img :src="`/storage/${post.image}`" onerror="this.src='/img/not_found.png';" alt="">
                 {{index}} - {{post.title}}
             <router-link :to="{ name: 'single-post', params: { slug: post.slug } }">Visualizza Post</router-link>
             </li>

@@ -2100,6 +2100,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'PostsComponent',
   data: function data() {
@@ -2276,7 +2277,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".router-link-exact-active {\n  /* color: $prova; */\n  color: red !important;\n}\n.empty {\n  flex-grow: 1;\n  visibility: hidden;\n}\nheader .titleText {\n  background-color: rgb(151, 98, 151);\n}\nheader nav {\n  font-size: 1.3rem;\n}", ""]);
+exports.push([module.i, ".router-link-exact-active {\n  color: #f3918d;\n  /* color: red !important; */\n}\n.empty {\n  flex-grow: 1;\n  visibility: hidden;\n}\nheader .titleText {\n  background-color: rgb(151, 98, 151);\n}\nheader nav {\n  font-size: 1.3rem;\n}", ""]);
 
 // exports
 
@@ -3747,6 +3748,13 @@ var render = function () {
               "li",
               { key: post.id },
               [
+                _c("img", {
+                  attrs: {
+                    src: "/storage/" + post.image,
+                    onerror: "this.src='/img/not_found.png';",
+                    alt: "",
+                  },
+                }),
                 _vm._v(
                   "\n            " +
                     _vm._s(index) +

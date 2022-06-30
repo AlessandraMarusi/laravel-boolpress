@@ -50,9 +50,10 @@ export default {
 }
 </script>
 <style lang="scss">
+@import '../../sass/variables';
  .router-link-exact-active{
-    /* color: $prova; */
-    color: red !important;
+    color: $prova;
+    /* color: red !important; */
  }
  .empty {
     flex-grow: 1;
