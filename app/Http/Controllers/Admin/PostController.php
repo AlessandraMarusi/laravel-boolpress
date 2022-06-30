@@ -103,7 +103,8 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
         $categories = Category::all();
-        return view('admin.posts.edit', compact('post', 'categories'));
+        $tags = Tag::all();
+        return view('admin.posts.edit', compact('post', 'categories','tags'));
     }
 
     /**
@@ -116,20 +117,32 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         $request->validate($this->validationRule);
-
         $data = $request->all();
 
         if($post->title != $data['title']){
             $post->title = $data['title'];
-            $slug = Str::of($data['title'])->slug("-");
-            if($slug != $post->slug){
+            $slug = Str::of($post->title)->slug("-");
+            if($slug != $post->slug) {
                 $post->slug = $this->getSlug($post->title);
             }
         }
         $post->category_id = $data['category_id'];
         $post->content = $data['content'];
-        $post->published = isset($data['published']);
+        $post->published = isset($data["published"]);
+        if( isset($data['image']) ) {
+            // cancello l'immagine
+            Storage::delete($post->image);
+            // salvo la nuova immagine
+            $path_image = Storage::put("uploads", $data['image']);
+            $post->image = $path_image;
+        }
         $post->update();
+
+        if(isset($data['tags'])){
+            $post->tags()->sync($data['tags']);
+        } else {
+            $post->tags()->sync([]);
+        }
         return redirect()->route('admin.posts.show', $post->id);
     }
 
@@ -141,11 +154,12 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $post->tags()->sync([]);
         $post->delete();
         return redirect()->route('admin.posts.index')->with('message', "Post with id: {$post->id} successfully deleted !");
     }
 
-    public function getSlug($title){
+    private function getSlug($title){
         $slug = Str::of($title)->slug("-");
         $coung = 1;
         while(Post::where('slug', $slug)->first()){

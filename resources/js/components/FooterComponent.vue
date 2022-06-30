@@ -1,5 +1,5 @@
 <template>
-    <footer>
+    <footer class="container">
         <h1>FOOTIE FOOTER!</h1>
     </footer>
 </template>
