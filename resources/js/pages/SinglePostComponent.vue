@@ -2,7 +2,7 @@
     <section>
         <div v-if="post">
             <h1 >{{post.title}}</h1>
-            <img :src="`/storage/${post.image}`" alt="">
+            <img :src="`/storage/${post.image}`" onerror="this.src='/img/not_found.png';" alt="">
             <p v-html="post.content"></p>
             <ul v-if="post.tags">
                 <li v-for="tag in post.tags" :key="tag.id">{{tag.name}}</li>
