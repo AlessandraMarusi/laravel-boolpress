@@ -2,7 +2,7 @@
     <section>
         <div v-if="post">
             <h1 >{{post.title}}</h1>
-            <img :src="`/storage/${post.image}`" onerror="this.src='/img/not_found.png';" alt="">
+            <img :src="`/storage/${post.image}`" alt="">
             <p v-html="post.content"></p>
             <ul v-if="post.tags">
                 <li v-for="tag in post.tags" :key="tag.id">{{tag.name}}</li>
@@ -35,9 +35,9 @@
                 <h3>Commenti</h3>
                 <ul>
                     <li v-for="comment in post.comments" :key="comment.id">
-                        <h4>{{comment.username}}</h4>
                         <small>{{comment.created_at}}</small>
                         <p>{{comment.content}}</p>
+                        <h4>{{comment.username}}</h4>
                     </li>
                 </ul>
       </div>
@@ -90,9 +90,9 @@ export default {
     }
 }
 </script>
-<style lang="scss">
- img {
-    width:200px;
- }
+<style lang="scss" scoped>
+img{
+    width: 200px;
+}
 
 </style>

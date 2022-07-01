@@ -6,31 +6,34 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 use App\Post;
 use App\Category;
 use App\Tag;
-
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
     protected $validationRule = [
-        'title' => 'required|string|max:100',
-        'content' => 'required',
+        "title" => "required|string|max:100",
+        "content" => "required",
         "published" => "sometimes|accepted",
         "category_id" => "nullable|exists:categories,id",
         "image" => "nullable|image|mimes:jpeg,bmp,png,svg|max:2048",
-        "tags" => "nullable|exists:tags,id"
+        'tags'=> "nullable|exists:tags,id"
     ];
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::paginate(8);
-        return view('admin.posts.index', compact('posts'));
+        //  $currentUser = Auth::user();
+        //  $posts = Post::where('post_id',$currentUser->id)->paginate(5);
+        //recupero ip dell'utente
+        //$user_ip = $request->ip();
+        $posts =  Post::paginate(5);
+        return view('admin.posts.index',compact('posts'));
     }
 
     /**
@@ -40,9 +43,10 @@ class PostController extends Controller
      */
     public function create()
     {
+        //select * from categories
         $categories = Category::all();
         $tags = Tag::all();
-        return view('admin.posts.create', compact('categories', 'tags'));
+        return view('admin.posts.create', compact('categories','tags'));
     }
 
     /**
@@ -55,30 +59,24 @@ class PostController extends Controller
     {
         $request->validate($this->validationRule);
         $data = $request->all();
+
         $newPost = new Post();
         $newPost->title = $data['title'];
         $newPost->content = $data['content'];
-        $newPost->published = isset($data['published']);
+        $newPost->published  = isset($data['published']);// true o false
         $newPost->category_id = $data['category_id'];
+        $newPost->slug = $this->getSlug($newPost->title);
+
         if( isset($data['image']) ) {
             $path_image = Storage::put("uploads", $data['image']); // uploads/nomeimg.jpg
             $newPost->image = $path_image;
         }
-        /* $slug = Str::of($data['title'])->slug("-");
-        $count = 1;
-        while(Post::where('slug', $slug)->first()){
-            $slug = Str::of($data['title'])->slug("-") . "-{$count}";
-            $count++;
-        } */
-        
-        $newPost->slug = $this->getSlug($newPost->title);
-
         $newPost->save();
 
         if(isset($data['tags'])){
             $newPost->tags()->sync($data['tags']);
         }
-        return redirect()->route('admin.posts.show', $newPost->id);
+        return redirect()->route('admin.posts.show',$newPost->id);
     }
 
     /**
@@ -87,10 +85,21 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post/*  $id */)
+    public function show(Post $post)
     {
+
+         //select * from posts where id = '5'
         //$post = Post::findOrFail($id);
-        //dd($post->category);
+        // $post = Post::find($id);
+        // if(empty($post)){
+        //     abort(404);
+        // }
+        // $currentUser = Auth::user();
+        //dd($currentUser->id);
+        // if($currentUser->id != $post->user_id && $currentUser->id != 1){
+        //     abort(403);
+        // }
+
         return view('admin.posts.show', compact('post'));
     }
 
@@ -101,11 +110,12 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
+
     {
         $post = Post::findOrFail($id);
         $categories = Category::all();
         $tags = Tag::all();
-        return view('admin.posts.edit', compact('post', 'categories','tags'));
+        return view('admin.posts.edit',compact('post','categories','tags'));
     }
 
     /**
@@ -157,16 +167,26 @@ class PostController extends Controller
     {
         $post->tags()->sync([]);
         $post->delete();
-        return redirect()->route('admin.posts.index')->with('message', "Post with id: {$post->id} successfully deleted !");
+        return redirect()->route('admin.posts.index')->with("message","Post with id: {$post->id} successfully deleted !");
     }
-
-    private function getSlug($title){
+    /**
+     * Generate an unique slug
+     *
+     * @param  string $title
+     * @return string
+     */
+    private function getSlug($title)
+    {
         $slug = Str::of($title)->slug("-");
-        $coung = 1;
-        while(Post::where('slug', $slug)->first()){
-            $slug = Str::of($data['title'])->slug("-") . "-{$count}";
+        $count = 1;
+
+        // Prendi il primo post il cui slug è uguale a $slug
+        // se è presente allora genero un nuovo slug aggiungendo -$count
+        while( Post::where("slug", $slug)->first() ) {
+            $slug = Str::of($title)->slug("-") . "-{$count}";
             $count++;
         }
+
         return $slug;
     }
 }
